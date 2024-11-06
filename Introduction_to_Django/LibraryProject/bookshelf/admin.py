@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import Book
 
-# Register your models here.
+# Register the Book model to be managed in the admin interface
+admin.site.register(Book)
