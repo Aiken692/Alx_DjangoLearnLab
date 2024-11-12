@@ -30,6 +30,9 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+LOGIN_REDIRECT_URL = 'list_books'  # Redirect after login
+LOGOUT_REDIRECT_URL = 'login'      # Redirect after logout
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
