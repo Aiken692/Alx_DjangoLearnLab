@@ -1,10 +1,16 @@
 from django.urls import path
-from .views import list_books, BookListView, LibraryDetailView, admin_view, librarian_view, member_view
+from .views import list_books, BookListView, LibraryDetailView, admin_view, librarian_view, member_view, add_book, edit_book, delete_book
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
+    # Book CRUD urls
+    path('book/add/', add_book, name='add_book'),
+    path('book/edit/<int:pk>/', edit_book, name='edit_book'),
+    path('book/delete/<int:pk>/', delete_book, name='delete_book'),
+
+
     # Access control urls
     path('admin/', admin_view, name='admin_view'),
     path('librarian/', librarian_view, name='librarian_view'),
