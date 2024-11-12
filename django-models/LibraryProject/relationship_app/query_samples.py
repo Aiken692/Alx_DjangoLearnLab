@@ -23,3 +23,11 @@ def retrieve_librarian_for_library(library_name):
         return librarian
     except Library.DoesNotExist:
         return None
+
+def filter_books_by_author(author_name):
+    try:
+        author = Author.objects.get(name=author_name)
+        books = Book.objects.filter(author=author)
+        return books
+    except Author.DoesNotExist:
+        return None
