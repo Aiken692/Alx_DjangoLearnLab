@@ -10,7 +10,6 @@ urlpatterns = [
     path('book/edit/<int:pk>/', edit_book, name='edit_book'),
     path('book/delete/<int:pk>/', delete_book, name='delete_book'),
 
-
     # Access control urls
     path('admin/', admin_view, name='admin_view'),
     path('librarian/', librarian_view, name='librarian_view'),
