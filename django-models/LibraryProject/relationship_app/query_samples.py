@@ -31,3 +31,11 @@ def filter_books_by_author(author_name):
         return books
     except Author.DoesNotExist:
         return None
+
+adef get_librarian_by_library(library_name):
+    try:
+        library = Library.objects.get(name=library_name)
+        librarian = Librarian.objects.get(library=library)
+        return librarian
+    except (Library.DoesNotExist, Librarian.DoesNotExist):
+        return None
