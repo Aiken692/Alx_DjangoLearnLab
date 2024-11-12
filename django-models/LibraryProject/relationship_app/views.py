@@ -8,6 +8,10 @@ def list_books(request):
     books = Book.objects.select_related('author').all()  # Fetch books with authors
     return render(request, 'relationship_app/list_books.html', {'books': books})
 
+def book_list_view(request):
+    books = Book.objects.all()
+    return render(request, 'relationship_app/book_list.html', {'books': books})
+
 class LibraryDetailView(DetailView):
     model = Library
     template_name = 'relationship_app/library_detail.html'
