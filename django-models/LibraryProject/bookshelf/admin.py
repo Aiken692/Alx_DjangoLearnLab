@@ -1,17 +1,15 @@
-# bookshelf/admin.py
-
 from django.contrib import admin
-from .models import Book
+from .models import Book, CustomUser
+from django.contrib.auth.admin import UserAdmin
 
 class BookAdmin(admin.ModelAdmin):
-    # Customize the columns displayed in the admin list view
-    list_display = ('title', 'author', 'publication_year')
+    # Display fields in the admin list view
+    list_display = ('title', 'author', 'publication_date')
 
-    # Add search functionality by title and author
+    # Add list filters for easy filtering
+    list_filter = ('author', 'publication_date')
+
+    # Enable search capabilities
     search_fields = ('title', 'author')
 
-    # Add filters for publication year
-    list_filter = ('publication_year',)
-
-# Register the Book model with the custom admin class
 admin.site.register(Book, BookAdmin)
