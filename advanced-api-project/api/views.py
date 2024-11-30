@@ -13,6 +13,8 @@ class BookListView(generics.ListAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]  # Allow unauthenticated read-only access
     filter_backends = [SearchFilter]  # Enables filtering functionality
     search_fields = ['title', 'author']  # Fields to search by query
+    ordering_fields = ['title', 'publication_year']  # Fields for ordering
+    ordering = ['title']  # Default ordering
 
 class BookDetailView(generics.RetrieveAPIView):
     """Retrieve a single book by ID."""
