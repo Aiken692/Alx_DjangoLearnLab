@@ -1,20 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>Profile</title>
-  </head>
-  <body>
-    <!-- templates/profile.html -->
-    {% extends "base_generic.html" %} {% block content %}
-    <h2>Welcome, {{ user.username }}!</h2>
-    <p>Email: {{ user.email }}</p>
-    <a href="{% url 'logout' %}">Logout</a>
+{% extends "base_generic.html" %} {% block content %}
+<h2>Welcome, {{ user.username }}!</h2>
+<p>Email: {{ user.email }}</p>
+<a href="{% url 'logout' %}">Logout</a>
 
-    <h2>Update Profile</h2>
-    <form method="post" enctype="multipart/form-data">
-      {% csrf_token %} {{ user_form.as_p }} {{ profile_form.as_p }}
-      <button type="submit">Update Profile</button>
-    </form>
-    {% endblock %}
-  </body>
-</html>
+<h2>Update Profile</h2>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %} {{ user_form.as_p }} {{ profile_form.as_p }}
+  <button type="submit">Update Profile</button>
+</form>
+{% endblock %}

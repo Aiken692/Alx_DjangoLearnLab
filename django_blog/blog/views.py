@@ -40,15 +40,19 @@ def user_logout(request):
 @login_required
 def profile(request):
     if request.method == 'POST':
-        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
-        if p_form.is_valid():
-            p_form.save()
+        user_form = UserUpdateForm(request.POST, instance=request.user)
+        profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
             return redirect('profile')
     else:
-        p_form = ProfileUpdateForm(instance=request.user.profile)
+        user_form = UserUpdateForm(instance=request.user)
+        profile_form = ProfileUpdateForm(instance=request.user.profile)
 
     context = {
-        'p_form': p_form
+        'user_form': user_form,
+        'profile_form': profile_form
     }
 
     return render(request, 'profile.html', context)
