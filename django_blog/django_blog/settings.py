@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog',
+    'taggit',  # Add the taggit app to the INSTALLED_APPS list
 ]
 
 
