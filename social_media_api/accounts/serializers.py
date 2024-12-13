@@ -4,14 +4,17 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 
+CustomUser = get_user_model()
+
 class CustomUserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
     class Meta:
-        model = get_user_model()
-        fields = ('id', 'username', 'password', 'email', 'bio', 'profile_picture', 'followers')
-        extra_kwargs = {'password': {'write_only': True}}
+        model = CustomUser
+        fields = ('id', 'username', 'email', 'password')
 
     def create(self, validated_data):
-        user = get_user_model().objects.create_user(
+        user = CustomUser.objects.create_user(
             username=validated_data['username'],
             password=validated_data['password'],
             email=validated_data['email'],
@@ -21,4 +24,13 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return user
 
 class TokenSerializer(serializers.Serializer):
-    token = serializers.CharField(max_length=255)
+    refresh = serializers.CharField()
+    access = serializers.CharField()
+
+    def validate(self, attrs):
+        refresh = RefreshToken(attrs['refresh'])
+        data = {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        }
+        return data
