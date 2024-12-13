@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework.authtoken',
     'accounts',
 ]
 
@@ -125,6 +124,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# use the custom user model:
-AUTH_USER_MODEL = 'accounts.CustomUser' 
+# social_media_api/settings.py
+
+AUTH_USER_MODEL = 'accounts.CustomUser'
 

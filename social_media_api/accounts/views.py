@@ -1,13 +1,14 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
 from .models import CustomUser
-from .serializers import UserSerializer
+from .serializers import CustomUserSerializer, TokenSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 
-# Create your views here.
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = TokenSerializer
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -21,8 +22,11 @@ class RegisterView(APIView):
             return Response({'error': 'Missing fields'}, status=400)
 
         user = CustomUser.objects.create_user(username=username, password=password, email=email)
-        token, _ = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key})
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        })
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
@@ -33,6 +37,9 @@ class LoginView(APIView):
 
         user = authenticate(username=username, password=password)
         if user:
-            token, _ = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key})
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+            })
         return Response({'error': 'Invalid credentials'}, status=400)
