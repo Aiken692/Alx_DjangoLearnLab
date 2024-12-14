@@ -1,5 +1,6 @@
-from django.shortcuts import render
-from rest_framework import viewsets, permissions, filters, generics, status
+from notifications.models import Notification
+from django.shortcuts import render, get_object_or_404
+from rest_framework import viewsets, , views, permissions, filters, generics, status
 from .models import Post, Comment, Like
 from notifications.models import Notification
 from .serializers import PostSerializer, CommentSerializer
@@ -39,29 +40,51 @@ class FeedView(generics.ListAPIView):
         following_users = user.following.all()
         return Post.objects.filter(author__in=following_users).order_by('-created_at')
 
-class LikePostView(generics.GenericAPIView):
+class LikePostView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)  # Using generics.get_object_or_404
-        like, created = Like.objects.get_or_create(user=request.user, post=post)
-        if created:
-            Notification.objects.create(
-                recipient=post.author,
-                actor=request.user,
-                verb='liked',
-                target=post
-            )
-            return Response({"message": "Post liked successfully!"}, status=status.HTTP_201_CREATED)
-        return Response({"message": "Post already liked!"}, status=status.HTTP_400_BAD_REQUEST)
+        # Use get_object_or_404 to retrieve the post or return 404 if not found
+        # generics.get_object_or_404(Post, pk=pk)
+        post = get_object_or_404(Post, pk=pk)
 
-class UnlikePostView(generics.GenericAPIView):
+        user = request.user
+
+        # Prevent the user from liking a post multiple times
+        if Like.objects.filter(user=user, post=post).exists():
+            return Response({"detail": "You already liked this post."}, status=400)
+
+        # Create the like
+        Like.objects.get_or_create(user=request.user, post=post)
+
+        # Create a notification for the post author
+        # Notification.objects.create
+        notification = Notification(
+            recipient=post.author,
+            actor=user,
+            verb="liked",
+            target_content_type=ContentType.objects.get_for_model(post),
+            target_object_id=post.id
+        )
+        notification.save()
+
+        return Response({"detail": "Post liked successfully."})
+
+class UnlikePostView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)  # Using generics.get_object_or_404
-        like = Like.objects.filter(user=request.user, post=post).first()
-        if like:
-            like.delete()
-            return Response({"message": "Post unliked successfully!"}, status=status.HTTP_204_NO_CONTENT)
-        return Response({"message": "You haven't liked this post!"}, status=status.HTTP_400_BAD_REQUEST)
+        # Use get_object_or_404 to retrieve the post or return 404 if not found
+        post = get_object_or_404(Post, pk=pk)
+
+        user = request.user
+
+        # Prevent the user from unliking a post they haven't liked
+        like = Like.objects.filter(user=user, post=post).first()
+        if not like:
+            return Response({"detail": "You haven't liked this post."}, status=400)
+
+        # Remove the like
+        like.delete()
+
+        return Response({"detail": "Post unliked successfully."})
